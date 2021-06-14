@@ -1,19 +1,25 @@
-const Contact = require('./schema/contact');
+const Contact = require('./schemas/contact');
 
-const getListContacts = async () => {
-  const results = await Contact.find({});
+const listContacts = async (userId) => {
+  const results = await Contact.find({ owner: userId }).populate({
+    path: 'owner',
+    select:'name email phone -_id'
+  });
 
   return results;
 };
 
-const getContactById = async (id) => {
-  const result = await Contact.findOne({ _id: id });
+const getContactById = async (id,userId) => {
+  const result = await Contact.findOne({ _id: id, owner: userId }).populate({
+    path: 'owner',
+    select:'name email phone -_id',
+  });
 
   return result;
 };
 
-const removeContact = async (id) => {
-  const result = await Contact.findByIdAndRemove({ _id: id });
+const removeContact = async (id,userId) => {
+  const result = await Contact.findByIdAndRemove({ id,owner:userId });
 
   return result;
 };
@@ -24,18 +30,19 @@ const addContact = async (body) => {
   return result;
 };
 
-const updateContact = async (id, body) => {
+const updateContact = async (id, body,userId) => {
   const result = await Contact.findByIdAndUpdate(
-         { _id: id },
-      {...body},
-      {new: true}
-      );
+      { id,owner:userId },
+      { ...body },
+      {new:true},
+  );
 
   return result;
 };
 
+
 module.exports = {
-  getListContacts,
+  listContacts,
   getContactById,
   removeContact,
   addContact,
