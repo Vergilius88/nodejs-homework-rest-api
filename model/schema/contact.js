@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
+=======
+const mongoose = require('mongoose');
+const { Schema, model, SchemaTypes } = mongoose;
+>>>>>>> 9238c084ed70124ebbed0cbdc4f7e154ccd2b699
 
 const contactSchema = new Schema(
   {
@@ -23,6 +28,21 @@ const contactSchema = new Schema(
       required: [true, "User phone number required"],
     },
   },
+  subscription: {
+    type: String,
+    },
+    password: {
+      type: String,
+      require: [true, "Set password for contact"],
+    },
+    token: {
+      type: String,
+    },
+    owner: {
+      type: SchemaTypes.ObjectId,
+      ref: "user",
+    },
+},
   { versionKey: false, timestamps: true }
 );
 
