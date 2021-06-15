@@ -58,6 +58,7 @@ const getContactById = async (req, res, next) => {
 };
 
 const addContact = async (req, res, next) => {
+
   try {
     const userId = req.user.id;
     const contact = await Contacts.addContact({ ...req.body,owner:userId });
@@ -110,7 +111,9 @@ const removeContact = async (req, res, next) => {
 };
 
 const updateContact = async (req, res, next) => {
+
   if (req.body && mongoose.Types.ObjectId.isValid(req.params.id)) {
+
     try {
       const userId = req.user.id;
       const contact = await Contacts.updateContact(
@@ -120,6 +123,7 @@ const updateContact = async (req, res, next) => {
       );
 
       if (contact) {
+
         return res.json({
           status: "success",
           code: 200,
@@ -128,6 +132,7 @@ const updateContact = async (req, res, next) => {
           },
         });
       } else {
+
         return res.status(404).json({
           status: "error",
           code: 404,
@@ -138,6 +143,7 @@ const updateContact = async (req, res, next) => {
       next(err);
     }
   } else {
+
     return res.status(400).json({
       status: "error",
       code: 400,

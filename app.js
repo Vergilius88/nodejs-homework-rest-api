@@ -7,6 +7,8 @@ const usersRouter=require('./routes/api/users/users.js');
 
 const app = express();
 
+app.use(express.static('usersavatars'));
+
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));

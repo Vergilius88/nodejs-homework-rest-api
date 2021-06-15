@@ -1,32 +1,25 @@
-<<<<<<< HEAD
-const mongoose = require("mongoose");
-const { Schema, model } = mongoose;
-=======
 const mongoose = require('mongoose');
 const { Schema, model, SchemaTypes } = mongoose;
->>>>>>> 9238c084ed70124ebbed0cbdc4f7e154ccd2b699
 
-const contactSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Set name for contact"],
-    },
-    email: {
-      type: String,
-      required: [true, "Set email for contact"],
-      unique: true,
-    },
-    phone: {
-      type: String,
-      validate: {
-        validator: function (v) {
-          return /\d{3}-\d{3}-\d{4}/.test(v);
-        },
-        message: (props) => `${props.value} is not a valid phone number!`,
+const contactSchema = new Schema({
+  name: {
+    type: String,
+    required: [true, 'Set name for contact']
+  },
+  email: {
+    type: String,
+    required: [true, 'Set email for contact'],
+    unique: true,
+  },
+  phone: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return /\d{3}-\d{3}-\d{4}/.test(v);
       },
-      required: [true, "User phone number required"],
+      message: props => `${props.value} is not a valid phone number!`
     },
+    required: [true, 'User phone number required']
   },
   subscription: {
     type: String,
@@ -46,6 +39,6 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-const Contact = model("contact", contactSchema);
+const Contact = model('contact', contactSchema);
 
 module.exports = Contact;
