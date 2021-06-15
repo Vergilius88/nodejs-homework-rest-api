@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
+const mongoose = require("mongoose");
+require("dotenv").config();
 const uriDb = process.env.URI_DB;
 
 const db = mongoose.connect(uriDb, {
@@ -9,21 +9,21 @@ const db = mongoose.connect(uriDb, {
   useFindAndModify: false,
 });
 
-mongoose.connection.on('connected', () => {
-  console.log('Database connection successful');
+mongoose.connection.on("connected", () => {
+  console.log("Database connection successful");
 });
 
-mongoose.connection.on('error', (err) => {
+mongoose.connection.on("error", (err) => {
   console.log(`Database connection error: ${err.message}`);
 });
 
-mongoose.connection.on('disconnected', () => {
-  console.log('Database disconnected');
+mongoose.connection.on("disconnected", () => {
+  console.log("Database disconnected");
 });
 
-process.on('SIGINT', async () => {
+process.on("SIGINT", async () => {
   await mongoose.connection.close(() => {
-  console.log('connection for db closed and app termination');
-  process.exit(1);
-  })
+    console.log("connection for db closed and app termination");
+    process.exit(1);
+  });
 });
