@@ -5,6 +5,8 @@ require("dotenv").config();
 const fs = require('fs').promises;
 const path = require('path');
 const createFolderIsExist = require('../helpers/create-dir');
+const { nanoid } = require('nanoid');
+const EmailService = require('../services/email');
 const SECRET_KEY = process.env.JWT_SECRET;
 
 const reg = async (req, res, next) => {
@@ -22,7 +24,16 @@ const reg = async (req, res, next) => {
         message: "Email already use",
       });
     }
-    const newUser = await Users.create(req.body);
+
+    const verifyToken = nanoid();
+    const emailService = new EmailService(process.env.NODE_ENV);
+    await emailService.sendEmail(verifyToken, email);
+
+    const newUser = await Users.create({
+      ...req.body,
+      verify: false,
+      verifyToken,
+    });
 
     return res.status(HttpCode.CREATED).json({
       status: "success",
@@ -30,6 +41,7 @@ const reg = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL
       },
     });
   } catch (err) {
@@ -44,7 +56,7 @@ const login = async (req, res, next) => {
     const user = await Users.findByEmail(email);
     const isValidPassword = await user?.validPassword(password);
 
-    if (!user || !isValidPassword) {
+    if (!user || !isValidPassword || !user.verify) {
 
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: "error",
@@ -55,7 +67,7 @@ const login = async (req, res, next) => {
     }
     const id = user._id;
     const payload = { id };
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "8h" });
     await Users.updateToken(id, token);
 
     return res.status(HttpCode.OK).json({
@@ -147,6 +159,32 @@ const saveAvatarToStatic = async (req) => {
   }
 
   return avatarURL;
-}
+};
 
-module.exports = { reg, login, logout, currentUser, updateUser };
+const verify = async (req, res, next) => {
+
+  try {
+    const user = await Users.findByVerifyToken(req.params.verifyToken);
+
+    if (user) {
+      await Users.updateVerifyToken(user.id, true, null);
+
+      return res.json({
+        status: 'success',
+        code: HttpCode.OK,
+        message:'Verification passed successfully!',
+      })
+    }
+
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: 'error',
+      code: HttpCode.BAD_REQUEST,
+      data: 'Bad request',
+      massage:'Link is not valid',
+    })
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { reg, login, logout, currentUser, updateUser, verify };

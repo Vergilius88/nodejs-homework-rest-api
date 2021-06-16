@@ -15,4 +15,6 @@ router.get('/current',guard,userController.currentUser);
 
 router.patch('/update', [guard,upload.single('avatar'),validate.validateUploadAvatar],userController.updateUser);
 
+router.get('/verify/:verifyToken', userController.verify);
+
 module.exports = router;
