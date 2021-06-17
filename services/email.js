@@ -10,7 +10,7 @@ class EmailService {
     switch (env) {
       case 'development': this.link = config.dev
         break
-      case 'stage':this.link=config.stage
+      case 'stage': this.link = config.stage
         break
       case 'production': this.link = config.prod
         break
@@ -36,7 +36,7 @@ class EmailService {
           button: {
             color: '#22BC66',
             text: 'Подвердить аккуант',
-            link:`${this.link}/api/users/verify/${verifyToken}`,
+            link: `${this.link}/api/users/verify/${verifyToken}`,
           },
         },
         outro: "Need help, or have questions? Just reply to this email,we'd love to help",
